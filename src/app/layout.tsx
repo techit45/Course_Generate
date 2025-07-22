@@ -23,7 +23,15 @@ export const metadata = {
     type: 'website',
     locale: 'th_TH',
   },
-  viewport: 'width=device-width, initial-scale=1.0, maximum-scale=5.0, minimum-scale=1.0, user-scalable=yes, viewport-fit=cover'
+}
+
+export const viewport = {
+  width: 'device-width',
+  initialScale: 1.0,
+  maximumScale: 5.0,
+  minimumScale: 1.0,
+  userScalable: true,
+  viewportFit: 'cover'
 }
 
 export default function RootLayout({
