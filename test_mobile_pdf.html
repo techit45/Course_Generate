@@ -1,0 +1,438 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, minimum-scale=1.0, user-scalable=yes, viewport-fit=cover">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="default">
+    <meta name="format-detection" content="telephone=no">
+    <title>Mobile PDF Generation Test - GenCouce</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <style>
+        * {
+            -webkit-tap-highlight-color: transparent;
+            -webkit-touch-callout: none;
+        }
+
+        body {
+            font-family: 'Segoe UI', Thaahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 16px;
+            background: linear-gradient(135deg, #f0f9ff 0%, #e0e7ff 100%);
+            min-height: 100vh;
+            -webkit-overflow-scrolling: touch;
+            overscroll-behavior-y: contain;
+        }
+
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 12px;
+            padding: 20px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 24px;
+            padding-bottom: 16px;
+            border-bottom: 2px solid #3b82f6;
+        }
+
+        h1 {
+            font-size: 1.8rem;
+            color: #1e40af;
+            margin: 0 0 8px 0;
+            font-weight: bold;
+        }
+
+        .subtitle {
+            color: #64748b;
+            font-size: 0.9rem;
+            margin: 0;
+        }
+
+        .device-info {
+            background: #f8fafc;
+            padding: 16px;
+            border-radius: 8px;
+            margin: 16px 0;
+            border-left: 4px solid #10b981;
+        }
+
+        .device-info h3 {
+            color: #1e40af;
+            margin: 0 0 8px 0;
+            font-size: 1rem;
+        }
+
+        .device-info p {
+            margin: 4px 0;
+            font-size: 0.85rem;
+            color: #64748b;
+        }
+
+        .test-content {
+            background: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            margin: 20px 0;
+            border: 1px solid #e2e8f0;
+        }
+
+        .test-section {
+            margin: 16px 0;
+            padding: 12px;
+            background: #f8fafc;
+            border-left: 4px solid #3b82f6;
+            border-radius: 4px;
+        }
+
+        .test-section h4 {
+            color: #1e40af;
+            margin: 0 0 8px 0;
+            font-size: 1rem;
+        }
+
+        .controls {
+            position: sticky;
+            top: 16px;
+            background: white;
+            padding: 16px;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            margin-bottom: 20px;
+            border: 2px solid #3b82f6;
+        }
+
+        .controls h2 {
+            margin: 0 0 12px 0;
+            color: #1e40af;
+            font-size: 1.2rem;
+        }
+
+        button {
+            background: #3b82f6;
+            color: white;
+            border: none;
+            padding: 12px 20px;
+            margin: 6px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 14px;
+            min-height: 44px;
+            min-width: 120px;
+            transition: all 0.2s ease-in-out;
+            -webkit-appearance: none;
+            -moz-appearance: none;
+            appearance: none;
+        }
+
+        button:hover {
+            background: #2563eb;
+            transform: translateY(-1px);
+        }
+
+        button:active {
+            transform: scale(0.98);
+        }
+
+        button:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .progress {
+            margin-top: 12px;
+            padding: 12px;
+            background: #f0f9ff;
+            border-radius: 6px;
+            border: 1px solid #3b82f6;
+            display: none;
+            font-size: 0.9rem;
+        }
+
+        .status {
+            background: #10b981;
+            color: white;
+            padding: 8px 12px;
+            border-radius: 6px;
+            margin: 8px 0;
+            font-size: 0.85rem;
+            display: none;
+        }
+
+        .error {
+            background: #ef4444;
+            color: white;
+            padding: 8px 12px;
+            border-radius: 6px;
+            margin: 8px 0;
+            font-size: 0.85rem;
+            display: none;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 16px;
+                margin: 8px;
+                border-radius: 8px;
+            }
+            
+            h1 {
+                font-size: 1.5rem;
+            }
+            
+            button {
+                width: 100%;
+                margin: 4px 0;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="controls">
+        <h2>🧪 Mobile PDF Test</h2>
+        <div id="device-support"></div>
+        <button onclick="runPDFTest()">ทดสอบการสร้าง PDF</button>
+        <button onclick="testMobileOptimizations()">ทดสอบ Mobile Optimizations</button>
+        <button onclick="showDeviceInfo()">แสดงข้อมูลอุปกรณ์</button>
+        <div id="progress" class="progress">
+            <div id="progress-text">กำลังทดสอบ...</div>
+        </div>
+        <div id="status" class="status"></div>
+        <div id="error" class="error"></div>
+    </div>
+
+    <div class="container">
+        <div class="header">
+            <h1>ชีทเรียนทดสอบบนมือถือ</h1>
+            <p class="subtitle">GenCouce Mobile PDF Generation Test</p>
+        </div>
+
+        <div class="device-info" id="device-details">
+            <h3>ข้อมูลอุปกรณ์</h3>
+            <p id="user-agent"></p>
+            <p id="screen-info"></p>
+            <p id="support-info"></p>
+        </div>
+
+        <div id="test-content" class="test-content">
+            <div class="test-section">
+                <h4>🎯 วัตถุประสงค์การทดสอบ</h4>
+                <ul>
+                    <li>ทดสอบการสร้าง PDF บนอุปกรณ์มือถือ</li>
+                    <li>ตรวจสอบความเข้ากันได้ของ html2canvas</li>
+                    <li>ทดสอบการจัดการหน่วยความจำ</li>
+                    <li>ตรวจสอบคุณภาพของไฟล์ที่สร้าง</li>
+                </ul>
+            </div>
+
+            <div class="test-section">
+                <h4>📱 Mobile Optimizations</h4>
+                <p>ระบบได้ทำการปรับแต่งสำหรับมือถือ:</p>
+                <ul>
+                    <li>ลด scale สำหรับประสิทธิภาพที่ดีขึ้น</li>
+                    <li>ปรับคุณภาพตามความสามารถของอุปกรณ์</li>
+                    <li>เพิ่มการจัดการหน่วยความจำ</li>
+                    <li>ใช้ allowTaint: false เพื่อความปลอดภัย</li>
+                </ul>
+            </div>
+
+            <div class="test-section">
+                <h4>🔧 การทดสอบ</h4>
+                <p><strong>ขั้นตอนที่ 1:</strong> ตรวจสอบการรองรับของเบราว์เซอร์</p>
+                <p><strong>ขั้นตอนที่ 2:</strong> จับภาพเนื้อหาด้วย html2canvas</p>
+                <p><strong>ขั้นตอนที่ 3:</strong> สร้างไฟล์ PDF ด้วย jsPDF</p>
+                <p><strong>ขั้นตอนที่ 4:</strong> ดาวน์โหลดไฟล์</p>
+            </div>
+
+            <div class="test-section">
+                <h4>✅ ผลการทดสอบ</h4>
+                <div id="test-results">
+                    <p>คลิกปุ่ม "ทดสอบการสร้าง PDF" เพื่อเริ่มการทดสอบ</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Device detection and testing
+        function isMobileDevice() {
+            const userAgent = navigator.userAgent.toLowerCase();
+            return /mobile|android|iphone|ipad|ipod|blackberry|opera mini|windows phone/i.test(userAgent);
+        }
+
+        function isDeviceSupported() {
+            const userAgent = navigator.userAgent.toLowerCase();
+            const isOldIOS = /iphone|ipad/.test(userAgent) && /os [1-9]_/.test(userAgent);
+            const isOldAndroid = /android/.test(userAgent) && /android [1-4]\./.test(userAgent);
+            
+            return !isOldIOS && !isOldAndroid;
+        }
+
+        function showDeviceInfo() {
+            document.getElementById('user-agent').textContent = `User Agent: ${navigator.userAgent}`;
+            document.getElementById('screen-info').textContent = `Screen: ${screen.width}×${screen.height}, Viewport: ${window.innerWidth}×${window.innerHeight}`;
+            
+            const supported = isDeviceSupported();
+            const mobile = isMobileDevice();
+            
+            document.getElementById('support-info').textContent = `Mobile: ${mobile ? 'Yes' : 'No'}, Supported: ${supported ? 'Yes' : 'No'}`;
+            
+            const supportDiv = document.getElementById('device-support');
+            if (supported) {
+                supportDiv.innerHTML = '<span style="color: #10b981;">✅ อุปกรณ์รองรับการสร้าง PDF</span>';
+            } else {
+                supportDiv.innerHTML = '<span style="color: #ef4444;">❌ อุปกรณ์ไม่รองรับการสร้าง PDF</span>';
+            }
+        }
+
+        function showProgress(show = true, text = 'กำลังทดสอบ...') {
+            const progress = document.getElementById('progress');
+            const progressText = document.getElementById('progress-text');
+            progress.style.display = show ? 'block' : 'none';
+            if (show) progressText.textContent = text;
+        }
+
+        function showStatus(message, isError = false) {
+            const status = document.getElementById('status');
+            const error = document.getElementById('error');
+            
+            if (isError) {
+                error.textContent = message;
+                error.style.display = 'block';
+                status.style.display = 'none';
+            } else {
+                status.textContent = message;
+                status.style.display = 'block';
+                error.style.display = 'none';
+            }
+        }
+
+        function clearStatus() {
+            document.getElementById('status').style.display = 'none';
+            document.getElementById('error').style.display = 'none';
+        }
+
+        async function runPDFTest() {
+            clearStatus();
+            showProgress(true, 'เริ่มการทดสอบ...');
+
+            try {
+                // Step 1: Check device support
+                showProgress(true, 'ตรวจสอบการรองรับอุปกรณ์...');
+                if (!isDeviceSupported()) {
+                    throw new Error('อุปกรณ์นี้ไม่รองรับการสร้าง PDF');
+                }
+
+                const mobile = isMobileDevice();
+                const testResults = document.getElementById('test-results');
+                let results = '<h5>ผลการทดสอบ:</h5>';
+                results += `<p>• อุปกรณ์: ${mobile ? 'มือถือ' : 'เดสก์ท็อป'}</p>`;
+
+                // Step 2: Test html2canvas
+                showProgress(true, 'ทดสอบการจับภาพ...');
+                const element = document.getElementById('test-content');
+                
+                const canvasOptions = {
+                    scale: mobile ? 1.2 : 1.5,
+                    useCORS: true,
+                    allowTaint: false,
+                    backgroundColor: '#ffffff',
+                    logging: false,
+                    removeContainer: true,
+                    ...(mobile && {
+                        windowWidth: window.innerWidth,
+                        windowHeight: window.innerHeight
+                    })
+                };
+
+                const canvas = await html2canvas(element, canvasOptions);
+                results += `<p>• การจับภาพ: สำเร็จ (${canvas.width}×${canvas.height})</p>`;
+
+                // Step 3: Test jsPDF
+                showProgress(true, 'สร้างไฟล์ PDF...');
+                const { jsPDF } = window.jspdf;
+                const pdf = new jsPDF({
+                    orientation: 'portrait',
+                    unit: 'mm',
+                    format: 'a4',
+                    compress: true
+                });
+
+                const imgWidth = 210;
+                const pageHeight = 295;
+                const imgHeight = (canvas.height * imgWidth) / canvas.width;
+                
+                pdf.addImage(canvas.toDataURL('image/png'), 'PNG', 0, 0, imgWidth, imgHeight);
+                
+                // Add metadata
+                pdf.setProperties({
+                    title: 'Mobile PDF Test',
+                    subject: 'GenCouce Mobile PDF Generation Test',
+                    author: 'Login-Learning AI System',
+                    creator: 'GenCouce Mobile Test'
+                });
+
+                results += `<p>• สร้าง PDF: สำเร็จ</p>`;
+
+                // Step 4: Download
+                showProgress(true, 'ดาวน์โหลดไฟล์...');
+                const timestamp = new Date().toISOString().split('T')[0];
+                const filename = `mobile-pdf-test-${timestamp}.pdf`;
+                
+                pdf.save(filename);
+                
+                results += `<p>• ดาวน์โหลด: สำเร็จ (${filename})</p>`;
+                results += `<p style="color: #10b981; font-weight: bold;">✅ การทดสอบสำเร็จทั้งหมด!</p>`;
+                
+                testResults.innerHTML = results;
+                showProgress(false);
+                showStatus('การทดสอบ PDF สำเร็จแล้ว! ตรวจสอบไฟล์ที่ดาวน์โหลด');
+
+            } catch (error) {
+                console.error('PDF Test Error:', error);
+                showProgress(false);
+                showStatus(`การทดสอบล้มเหลว: ${error.message}`, true);
+                
+                const testResults = document.getElementById('test-results');
+                testResults.innerHTML = `<p style="color: #ef4444;">❌ ข้อผิดพลาด: ${error.message}</p>`;
+            }
+        }
+
+        function testMobileOptimizations() {
+            const mobile = isMobileDevice();
+            const results = [];
+            
+            // Test touch interactions
+            results.push(`Touch Device: ${mobile ? 'Yes' : 'No'}`);
+            results.push(`Tap Highlight: ${getComputedStyle(document.body).webkitTapHighlightColor === 'rgba(0, 0, 0, 0)' ? 'Disabled' : 'Enabled'}`);
+            results.push(`Viewport Width: ${window.innerWidth}px`);
+            results.push(`Screen Width: ${screen.width}px`);
+            results.push(`Device Pixel Ratio: ${window.devicePixelRatio || 1}`);
+            
+            // Test CSS optimizations
+            const button = document.querySelector('button');
+            const buttonHeight = button ? getComputedStyle(button).minHeight : 'N/A';
+            results.push(`Button Min Height: ${buttonHeight}`);
+            
+            const testResults = document.getElementById('test-results');
+            testResults.innerHTML = `
+                <h5>Mobile Optimization Results:</h5>
+                ${results.map(result => `<p>• ${result}</p>`).join('')}
+            `;
+            
+            showStatus('Mobile optimization test completed');
+        }
+
+        // Initialize on load
+        window.onload = function() {
+            showDeviceInfo();
+        };
+    </script>
+</body>
+</html>

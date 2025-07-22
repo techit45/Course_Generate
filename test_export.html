@@ -1,0 +1,312 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test Export - GenCouce</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            background: linear-gradient(135deg, #f0f9ff 0%, #e0e7ff 100%);
+        }
+        .study-sheet {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+            border-bottom: 2px solid #3b82f6;
+            padding-bottom: 15px;
+        }
+        .title {
+            font-size: 28px;
+            color: #1e40af;
+            margin-bottom: 10px;
+            font-weight: bold;
+        }
+        .subtitle {
+            color: #64748b;
+            font-size: 16px;
+        }
+        .section {
+            margin: 20px 0;
+            padding: 15px;
+            background: #f8fafc;
+            border-left: 4px solid #3b82f6;
+            border-radius: 5px;
+        }
+        .section-title {
+            font-size: 18px;
+            font-weight: bold;
+            color: #1e40af;
+            margin-bottom: 10px;
+        }
+        .objectives {
+            list-style: none;
+            padding: 0;
+        }
+        .objectives li {
+            background: white;
+            margin: 8px 0;
+            padding: 10px;
+            border-radius: 5px;
+            border-left: 3px solid #10b981;
+        }
+        .controls {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: white;
+            padding: 15px;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        button {
+            background: #3b82f6;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            margin: 5px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 14px;
+        }
+        button:hover {
+            background: #2563eb;
+        }
+        button:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+        .progress {
+            margin-top: 10px;
+            padding: 10px;
+            background: #f0f9ff;
+            border-radius: 5px;
+            border: 1px solid #3b82f6;
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="controls">
+        <h3 style="margin-top: 0;">Export Test</h3>
+        <button onclick="exportToPDF()">Export PDF</button>
+        <button onclick="exportToJSON()">Export JSON</button>
+        <button onclick="generateShareLink()">Generate Share Link</button>
+        <div id="progress" class="progress">
+            <div id="progress-text">Exporting...</div>
+        </div>
+    </div>
+
+    <div id="study-sheet-content" class="study-sheet">
+        <div class="header">
+            <div class="title">ชีทเรียนทดสอบระบบ Export</div>
+            <div class="subtitle">สำหรับ GenCouce Study Sheet Generator</div>
+        </div>
+
+        <div class="section">
+            <div class="section-title">🎯 วัตถุประสงค์การเรียนรู้</div>
+            <ul class="objectives">
+                <li>นักเรียนสามารถเข้าใจการทำงานของระบบ Export ได้</li>
+                <li>นักเรียนสามารถสร้างไฟล์ PDF จากเนื้อหาเว็บได้</li>
+                <li>นักเรียนสามารถแชร์ชีทเรียนออนไลน์ได้</li>
+            </ul>
+        </div>
+
+        <div class="section">
+            <div class="section-title">📚 เนื้อหาหลัก</div>
+            <h4>1. ระบบ Export ของ GenCouce</h4>
+            <p>ระบบการส่งออกของ GenCouce รองรับการส่งออกในรูปแบบต่าง ๆ ดังนี้:</p>
+            <ul>
+                <li><strong>PDF:</strong> สำหรับการพิมพ์และเก็บเอกสาร</li>
+                <li><strong>Web Share:</strong> สำหรับการแชร์ออนไลน์</li>
+                <li><strong>JSON:</strong> สำหรับการสำรองข้อมูล</li>
+            </ul>
+
+            <h4>2. คุณสมบัติของระบบ</h4>
+            <ul>
+                <li>การสร้างชื่อไฟล์อัตโนมัติ</li>
+                <li>การแสดงความคืบหน้าในการสร้างไฟล์</li>
+                <li>การจัดการไฟล์ขนาดใหญ่</li>
+                <li>การรักษาความสอดคล้องของธีม Login-Learning</li>
+            </ul>
+        </div>
+
+        <div class="section">
+            <div class="section-title">🔧 แบบฝึกหัด</div>
+            <p><strong>ข้อ 1:</strong> การส่งออกเป็น PDF มีข้อดีอย่างไร?</p>
+            <p style="margin-left: 20px;">ตอบ: _________________________________</p>
+            
+            <p><strong>ข้อ 2:</strong> เหตุใดจึงควรมีการแสดงความคืบหน้าในการสร้างไฟล์?</p>
+            <p style="margin-left: 20px;">ตอบ: _________________________________</p>
+        </div>
+
+        <div class="section">
+            <div class="section-title">🎮 กิจกรรม</div>
+            <h4>กิจกรรม: ทดสอบการส่งออก</h4>
+            <ol>
+                <li>คลิกปุ่ม "Export PDF" เพื่อสร้างไฟล์ PDF</li>
+                <li>ตรวจสอบความถูกต้องของไฟล์ที่สร้าง</li>
+                <li>ทดสอบการสร้างลิงค์แชร์</li>
+                <li>ส่งออกข้อมูลเป็น JSON เพื่อสำรอง</li>
+            </ol>
+        </div>
+
+        <div class="section">
+            <div class="section-title">📝 สรุป</div>
+            <p>ระบบ Export ของ GenCouce ช่วยให้ผู้ใช้สามารถส่งออกชีทเรียนในรูปแบบต่าง ๆ ได้อย่างสะดวก 
+            พร้อมด้วยคุณสมบัติที่ทันสมัยและใช้งานง่าย เหมาะสำหรับการใช้งานในสภาพแวดล้อมการศึกษาที่หลากหลาย</p>
+        </div>
+    </div>
+
+    <script>
+        // Mock export functions for testing
+        function showProgress() {
+            const progress = document.getElementById('progress');
+            const progressText = document.getElementById('progress-text');
+            progress.style.display = 'block';
+            
+            // Simulate progress
+            const steps = [
+                'เตรียมข้อมูล...',
+                'จับภาพเนื้อหา...',
+                'แปลงเป็นไฟล์...',
+                'เพิ่มข้อมูลเมตะ...',
+                'สร้างไฟล์...',
+                'เสร็จสิ้น!'
+            ];
+            
+            let currentStep = 0;
+            const interval = setInterval(() => {
+                if (currentStep < steps.length) {
+                    progressText.textContent = steps[currentStep];
+                    currentStep++;
+                } else {
+                    clearInterval(interval);
+                    setTimeout(() => {
+                        progress.style.display = 'none';
+                    }, 1000);
+                }
+            }, 800);
+        }
+
+        async function exportToPDF() {
+            showProgress();
+            
+            try {
+                // Use html2canvas to capture the content
+                const element = document.getElementById('study-sheet-content');
+                const canvas = await html2canvas(element, {
+                    scale: 2,
+                    backgroundColor: '#ffffff'
+                });
+
+                // Create PDF with jsPDF
+                const { jsPDF } = window.jspdf;
+                const pdf = new jsPDF('p', 'mm', 'a4');
+                
+                const imgWidth = 210;
+                const pageHeight = 295;
+                const imgHeight = (canvas.height * imgWidth) / canvas.width;
+                let heightLeft = imgHeight;
+
+                let position = 0;
+
+                // Add image to PDF
+                pdf.addImage(canvas.toDataURL('image/png'), 'PNG', 0, position, imgWidth, imgHeight);
+                heightLeft -= pageHeight;
+
+                // Add pages if needed
+                while (heightLeft >= 0) {
+                    position = heightLeft - imgHeight;
+                    pdf.addPage();
+                    pdf.addImage(canvas.toDataURL('image/png'), 'PNG', 0, position, imgWidth, imgHeight);
+                    heightLeft -= pageHeight;
+                }
+
+                // Add metadata
+                pdf.setProperties({
+                    title: 'ชีทเรียนทดสอบระบบ Export',
+                    subject: 'GenCouce Study Sheet Test',
+                    author: 'Login-Learning AI System',
+                    creator: 'GenCouce Study Sheet Generator'
+                });
+
+                // Generate filename with timestamp
+                const timestamp = new Date().toISOString().split('T')[0];
+                const filename = `ชีทเรียนทดสอบ-${timestamp}.pdf`;
+                
+                // Save PDF
+                pdf.save(filename);
+                
+                alert('PDF ถูกสร้างและดาวน์โหลดเรียบร้อยแล้ว!');
+            } catch (error) {
+                console.error('PDF export error:', error);
+                alert('เกิดข้อผิดพลาดในการสร้าง PDF: ' + error.message);
+            }
+        }
+
+        function exportToJSON() {
+            showProgress();
+            
+            const studySheetData = {
+                title: 'ชีทเรียนทดสอบระบบ Export',
+                exportedAt: new Date().toISOString(),
+                objectives: [
+                    'นักเรียนสามารถเข้าใจการทำงานของระบบ Export ได้',
+                    'นักเรียนสามารถสร้างไฟล์ PDF จากเนื้อหาเว็บได้',
+                    'นักเรียนสามารถแชร์ชีทเรียนออนไลน์ได้'
+                ],
+                content: {
+                    sections: ['ระบบ Export', 'คุณสมบัติ'],
+                    exercises: 2,
+                    activities: 1
+                },
+                metadata: {
+                    generator: 'GenCouce Study Sheet Generator',
+                    platform: 'Login-Learning',
+                    version: '1.0'
+                }
+            };
+
+            const dataStr = JSON.stringify(studySheetData, null, 2);
+            const dataBlob = new Blob([dataStr], {type: 'application/json'});
+            
+            const timestamp = new Date().toISOString().split('T')[0];
+            const filename = `ชีทเรียนทดสอบ-${timestamp}.json`;
+            
+            const link = document.createElement('a');
+            link.href = URL.createObjectURL(dataBlob);
+            link.download = filename;
+            link.click();
+            
+            alert('ไฟล์ JSON ถูกสร้างและดาวน์โหลดเรียบร้อยแล้ว!');
+        }
+
+        function generateShareLink() {
+            showProgress();
+            
+            setTimeout(() => {
+                const shareId = 'sheet-' + Date.now();
+                const shareUrl = `https://gencouce.login-learning.com/share/${shareId}`;
+                
+                // Copy to clipboard
+                navigator.clipboard.writeText(shareUrl).then(() => {
+                    alert(`ลิงค์แชร์ถูกสร้างและคัดลอกไปยังคลิปบอร์ดแล้ว!\n\n${shareUrl}`);
+                }).catch(() => {
+                    prompt('ลิงค์แชร์ (กด Ctrl+C เพื่อคัดลอก):', shareUrl);
+                });
+            }, 3000);
+        }
+    </script>
+</body>
+</html>
